@@ -79,7 +79,6 @@ const movePosition = () => {
 
         const chainItems = document.querySelectorAll(".chain");
 
-
         checkColision();
 
         if (chainItems.length > 1) {
@@ -87,22 +86,16 @@ const movePosition = () => {
                 let first = chainItems[0];
                 first.remove();
             }
-
-
         }
-
     }
     character.style.left = `${x}px`;
     character.style.top = `${y}px`;
-
-    //if ((`${x}` == `${xGen}`) && (`${y}` == `${yGen}`)) {
 
     if ((x >= xGen - move && x <= xGen + move) && (y >= yGen - move && y <= yGen + move)) {
         console.log('zebrano');
         deleteLastElement();
     }
     setTimeout(movePosition, 100);
-
 }
 
 let activeElement = false;
@@ -116,14 +109,15 @@ const generatePoint = () => {
     xGen = Math.round(Math.floor(Math.random() * (boardX - move) / 10) * 10);
     yGen = Math.round(Math.floor(Math.random() * (boardY - move) / 10) * 10);
 
-    console.log(xGen + " lol " + yGen);
+    console.log("TEST: Wygenerowane koordonaty " + xGen + " " + yGen);
 
     if ((x >= xGen - move && x <= xGen + move) && (y >= yGen - move && y <= yGen + move)) {
         activeElement = false;
         generatePoint();
-        console.log('Ten sam punkt!');
+        console.log('Ten sam punkt.');
         return;
     }
+
     const newElement = document.createElement("div");
     newElement.classList.add("last");
     newElement.style.height = "10px";
@@ -140,12 +134,10 @@ const generatePoint = () => {
 const deleteLastElement = () => {
     if (activeElement) {
         point++;
-
         const lastElement = document.querySelector(".last");
         activeElement = false;
         lastElement.remove();
     }
-
 }
 
 const checkColision = () => {
@@ -156,34 +148,15 @@ const checkColision = () => {
             let how = chainItems.length - (chainItems.length - i);
             console.log(how);
             for (let j = 0; j < how; j++) {
-                console.log(j);
-                //  chainItems.forEach(function (item) {
                 chainItems[j].style.backgroundColor = 'purple';
-                //     })
 
                 let first = chainItems[j];
                 first.remove();
                 point--;
-                console.log('kolizacja xy');
-
+                console.log('NASTĄPIŁA KOLIZJA');
             }
-
         }
     }
-    // chainItems.forEach(function (item, index) {
-    //     if ((`${x}px` == item.style.left) && (`${y}px` == item.style.top)) {
-    //         for (let i = 0; i < index + 1; i++) {
-    //             console.log("Ktora interacja" + index);
-
-    //             let first = chainItems[0];
-    //             first.style.backgroundColor = "red";
-    //             // first.remove();
-    //             console.log('kolizacja xy');
-
-    //         }
-
-    //     }
-    // })
 }
 
 const init = () => {
