@@ -41,8 +41,6 @@ const changePosition = (e) => {
     }
 }
 
-
-
 const movePosition = () => {
     if (whereGo == "left") {
         if (x < move) {
