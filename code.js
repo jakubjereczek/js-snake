@@ -134,7 +134,6 @@ const generatePoint = () => {
 
     newElement.style.backgroundColor = "green";
     board.appendChild(newElement);
-
     setTimeout(generatePoint, 10000);
 }
 
