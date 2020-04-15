@@ -1,0 +1,27 @@
+ * {}
+
+ body {
+     margin: 0;
+ }
+
+ #board {
+     transform: translateX(-100px);
+
+     margin: 10px auto;
+     background: #000;
+ }
+
+ #character {
+     height: 10px;
+     width: 10px;
+     position: relative;
+     background: #ff6347;
+ }
+
+ .chain {
+     height: 10px;
+     width: 10px;
+     position: fixed;
+
+     background: #ff6347;
+ }
