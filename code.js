@@ -1,5 +1,6 @@
 const character = document.querySelector("#character");
 const board = document.querySelector("#board");
+const score = document.querySelector(".score");
 
 let cords = [];
 
@@ -54,7 +55,7 @@ const movePosition = () => {
         y -= move;
     } else if (whereGo == "right") {
         if (x > (boardX - (2 * move))) {
-            x = 0;;
+            x = 0;
         }
         x += move;
     } else if (whereGo == "down") {
@@ -111,12 +112,24 @@ const generatePoint = () => {
 
     console.log("TEST: Wygenerowane koordonaty " + xGen + " " + yGen);
 
-    if ((x >= xGen - move && x <= xGen + move) && (y >= yGen - move && y <= yGen + move)) {
+    const chainItems = document.querySelectorAll(".chain");
+
+    for (let i = 0; i < chainItems.length; i++) {
+        if ((`${xGen}px` == chainItems[i].style.left) && (`${yGen}px` == chainItems[i].style.top)) {
+            activeElement = false;
+            console.log('Blokada generowania na postaci');
+            generatePoint();
+            return;
+        }
+    }
+    if ((x == xGen && y == yGen)) {
         activeElement = false;
         generatePoint();
-        console.log('Ten sam punkt.');
+        console.log("Blisko postaci, generuje nowy.");
         return;
     }
+
+
 
     const newElement = document.createElement("div");
     newElement.classList.add("last");
@@ -128,7 +141,6 @@ const generatePoint = () => {
 
     newElement.style.backgroundColor = "green";
     board.appendChild(newElement);
-    setTimeout(generatePoint, 10000);
 }
 
 const deleteLastElement = () => {
@@ -137,6 +149,8 @@ const deleteLastElement = () => {
         const lastElement = document.querySelector(".last");
         activeElement = false;
         lastElement.remove();
+        generatePoint();
+        setScore(point);
     }
 }
 
@@ -147,23 +161,30 @@ const checkColision = () => {
         if ((`${x}px` == chainItems[i].style.left) && (`${y}px` == chainItems[i].style.top)) {
             let how = chainItems.length - (chainItems.length - i);
             console.log(how);
-            for (let j = 0; j < how; j++) {
-                chainItems[j].style.backgroundColor = 'purple';
+            if (how > 2) {
+                for (let j = 0; j < how; j++) {
 
-                let first = chainItems[j];
-                first.remove();
-                point--;
-                console.log('NASTĄPIŁA KOLIZJA');
+                    let first = chainItems[j];
+                    first.remove();
+                    point--;
+                    console.log('NASTĄPIŁA KOLIZJA');
+                }
+                setScore(point);
             }
         }
     }
 }
 
+const setScore = (how) => {
+    let textScore = "wynik: " + how;
+    score.textContent = textScore;
+}
+
 const init = () => {
     x = 0;
     y = 0;
-    boardX = 500;
-    boardY = 300;
+    boardX = 400;
+    boardY = 400;
 
     character.style.left = `${x}px`;
     character.style.top = `${y}px`;
@@ -174,6 +195,7 @@ const init = () => {
 
     generatePoint();
     movePosition();
+    setScore(point);
 }
 
 init();

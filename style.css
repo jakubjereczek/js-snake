@@ -2,12 +2,20 @@
 
  body {
      margin: 0;
+     font-family: Arial, Helvetica, sans-serif;
  }
 
  #board {
-     transform: translateX(-100px);
+     transform: translateX(0px);
      margin: 10px auto;
      background: #000;
+ }
+
+ .score {
+     font-size: 18px;
+     opacity: 0.9;
+     margin-left: 10px;
+     color: #ff6347;
  }
 
  #character {
