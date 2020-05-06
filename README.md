@@ -5,7 +5,7 @@ A simple snake game.
 JavaScript
 
 ## General info
-Project made as part of JavaScript language learning.
+Project made as part of my JavaScript learning.
 
 ## Images
 ![Game](./img/game.png)
