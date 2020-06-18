@@ -12,11 +12,9 @@ class Chain {
             y: y
         }
         this.cords.push(polozenie);
-        //console.log('');
     }
     deleteLast() {
         this.cords.splice(this.cords[0], 1);
-        //  console.log('Usunieto chain');
     }
     changeColor() {
         this.color = !this.color;

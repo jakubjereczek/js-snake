@@ -14,7 +14,6 @@ class Game {
         this.board = document.querySelector("#board");
         this.score = document.querySelector(".score");
         this.init();
-
     }
 
     generatePoint() {
@@ -38,9 +37,20 @@ class Game {
     }
 
     changePositon(event) {
-        const key = event.keyCode;
-        // console.log(this);
-        this.wherego = this.player.selectPosition(key);
+        const number = event.keyCode;
+        const wherego = this.wherego;
+
+        if ((number == 37) && (wherego != "right")) {
+            this.wherego = "left";
+        } else if ((number == 38) && (wherego != "down")) {
+            this.wherego = "up";
+        } else if ((number == 39) && (wherego != "left")) {
+            this.wherego = "right";
+        } else if ((number == 40) && (wherego != "up")) {
+            this.wherego = "down";
+        } else {
+            return;
+        }
     }
 
     movePosition() {
@@ -79,11 +89,8 @@ class Game {
         // Zmiana puntkow, ktora spowoduje potem usuniecie nadmiaru landucha w render
         for (let i = 0; i < this.player.checkColision(); i++) {
             this.point.substractOne();
-            console.log('Suma puntkow jest rowna ' + this.point.getPoints());
         }
 
-        //Zbieranie jabłka.
-        // if ((this.player.x >= this.apple.getX() + this.move && this.player.x <= this.apple.getX() + this.move) && (this.player.y >= this.apple.getY() - this.move) && (this.player.y <= this.apple.getY() + this.move)) {
         if ((this.player.x == this.apple.getX()) && this.apple.getY() == (this.player.y)) {
             this.generatePoint();
             this.point.addOne();
@@ -91,10 +98,9 @@ class Game {
 
         }
         this.render();
-
         setTimeout(this.movePosition.bind(this), 200); // 0.2s
-
     }
+
     render() {
         this.character.style.left = `${this.player.x}px`;
         this.character.style.top = `${this.player.y}px`;
@@ -110,14 +116,11 @@ class Game {
         newElement.style.top = `${this.apple.getY()}px`;
         newElement.style.position = "fixed";
         newElement.style.backgroundColor = "green";
-
         this.board.appendChild(newElement);
 
         const chainsElements = document.querySelectorAll("div .chain");
-
-        if ((chainsElements.length > this.player.chain.cords.length) || (chainsElements.length > this.point.getPoints())) {
-            let liczbaElementowDoUsuniecia = chainsElements.length - this.point.getPoints();
-
+        if ((chainsElements.length >= this.player.chain.cords.length) || (chainsElements.length >= this.point.getPoints())) {
+            let liczbaElementowDoUsuniecia = chainsElements.length - this.point.getPoints() + 1;
             for (let i = 0; i < liczbaElementowDoUsuniecia; i++) {
                 chainsElements[i].remove();
             }
@@ -130,16 +133,13 @@ class Game {
         if ((this.player.chain.cords.length > 0) && (this.point.getPoints() > 0)) {
             const newChain = document.createElement("div");
             newChain.classList.add("chain");
-
             newChain.style.left = `${this.player.chain.cords[this.player.chain.cords.length-1].x}px`;
             newChain.style.top = `${this.player.chain.cords[this.player.chain.cords.length-1].y}px`;
-
             newChain.style.height = "10px";
             newChain.style.width = "10px";
             newChain.style.position = "fixed";
 
             this.player.chain.changeColor();
-
             if (this.player.chain.color) {
                 newChain.style.backgroundImage = `url("img/chain.png")`;
             } else {
@@ -147,7 +147,6 @@ class Game {
             }
 
             this.board.appendChild(newChain);
-
             this.score.textContent = this.point.getPointsText();
         }
     }
