@@ -19,3 +19,5 @@ class Apple {
         this.setCords(Math.round(Math.floor(Math.random() * (boardx - move) / 10) * 10), (Math.floor(Math.random() * (boardy - move) / 10) * 10));
     }
 }
+
+export default Apple;

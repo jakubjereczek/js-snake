@@ -20,3 +20,5 @@ class Chain {
         this.color = !this.color;
     }
 }
+
+export default Chain;

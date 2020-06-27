@@ -1,3 +1,5 @@
+import Chain from './Chain.js';
+
 class Player {
 
     constructor(x, y) {
@@ -32,3 +34,5 @@ class Player {
     }
 
 }
+
+export default Player;

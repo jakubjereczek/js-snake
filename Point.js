@@ -19,8 +19,7 @@ class Point {
         this.substractOne = function () {
             _points--;
         }
-
     }
-
-
 }
+
+export default Point;
