@@ -1,3 +1,4 @@
+import Superpower from './Superpower.js';
 import Apple from './Apple.js';
 import Point from './Point.js';
 import Player from './Player.js';
@@ -8,6 +9,7 @@ class Game {
         this.player = new Player(x, y);
         this.point = new Point(score);
         this.apple = new Apple();
+        this.superpower = new Superpower();
         window.addEventListener('keydown', this.changePositon.bind(this));
         this.boardX = boardx;
         this.boardY = boardy;
@@ -16,25 +18,79 @@ class Game {
         this.character = document.querySelector("#character");
         this.board = document.querySelector("#board");
         this.score = document.querySelector(".score");
+        this.time = "200"
+        this.startedTimeout = false;
         this.init();
     }
 
-    generatePoint() {
-        this.apple.generatePoint(this.boardX, this.boardY, this.move);
-        if (this.player.chain.cords.length > 1) {
-            for (let i = 0; i < this.player.chain.cords.length; i++) {
-                if ((this.apple.getX() == this.player.chain.cords[i].x) &&
-                    (this.apple.getY() == this.player.chain.cords[i].y)) {
-                    console.log('Blokada generowania na postaci');
-                    this.generatePoint();
+    generateAppleOrSuperPower(type) {
+        const checkColisionWithChains = (element, type) => {
+            if (this.player.chain.cords.length > 1) {
+                for (let i = 0; i < this.player.chain.cords.length; i++) {
+                    if ((element.getX() == this.player.chain.cords[i].x) &&
+                        (element.getY() == this.player.chain.cords[i].y)) {
+                        console.log('Blokada generowania na postaci');
+                        this.generateAppleOrSuperPower(type);
+                        return;
+                    }
+                }
+            }
+        }
+        const checkCollisionWithPlayerAndAppleOrSuperPower = (element, type) => {
+            if (type === "apple") {
+                if ((this.player.x == element.getX()) && (this.player.y == element.getY()) || ((element.getX() == this.superpower.getX()) && (element.getY() == this.superpower.getY()))) {
+                    this.generateAppleOrSuperPower("apple");
+                    console.log("Blisko postaci lub supermocy");
+                    return;
+                }
+            } else if (type === "superpower") {
+                if ((this.player.x == element.getX()) && (this.player.y == element.getY()) || ((element.getX() == this.apple.getX()) && (element.getY() == this.apple.getY()))) {
+                    this.generateAppleOrSuperPower("superpower");
+                    console.log("Blisko postaci lub supermocy");
                     return;
                 }
             }
         }
-        if ((this.player.x == this.apple.getX()) && (this.player.y == this.apple.getY())) {
-            this.generatePoint();
-            console.log("Blisko postaci, generuje nowy.");
-            return;
+        if (type === "apple") {
+            this.apple.generatePoint(this.boardX, this.boardY, this.move);
+            checkColisionWithChains(this.apple, "apple");
+            checkCollisionWithPlayerAndAppleOrSuperPower(this.apple, "apple");
+        } else if (type === "superpower") {
+            const lenghtOfSuperpowerList = this.superpower.typeList.length;
+            const random = Math.floor(Math.random() * lenghtOfSuperpowerList);
+            this.superpower.generatePoint(this.boardX, this.boardY, this.move, random);
+            checkColisionWithChains(this.superpower, "superpower");
+            checkCollisionWithPlayerAndAppleOrSuperPower(this.superpower, "superpower");
+
+
+        }
+    }
+
+    rescheduleSuperPower(option) {
+        if (option === "collect") {
+            document.querySelector(".superpower").remove();
+            // Tutaj nastepuję ustalenie "supermocy".
+            if (this.superpower.activeType === this.superpower.typeList[0]) {
+                this.time = this.time / 2;
+            } else if (this.superpower.activeType === this.superpower.typeList[1]) {
+                this.time = this.time * 2;
+            }
+            setTimeout(() => {
+                // Efekt trwa 20 sekund i po tym czasie się kończy oraz generuję nowy. Zmiana na false powoduję wygenerowanie nowego elementu.
+                this.superpower.changeStatus(false);
+                this.time = "200";
+            }, this.superpower.time * 2 * 1000)
+        } else if (option === "change") {
+            if (document.querySelector(".superpower")) {
+                document.querySelector(".superpower").remove();
+                this.generateAppleOrSuperPower("superpower");
+                // generate new cords 
+                setTimeout(() => {
+                    this.superpower.changeStatus(false);
+                    this.startedTimeout = false;
+                    // step to generate element on board
+                }, this.superpower.time * 1000)
+            }
         }
     }
 
@@ -88,13 +144,19 @@ class Game {
         for (let i = 0; i < this.player.checkColision(); i++) {
             this.point.substractOne();
         }
-        if ((this.player.x == this.apple.getX()) && this.apple.getY() == (this.player.y)) {
-            this.generatePoint();
+        if ((this.player.x == this.apple.getX()) && this.apple.getY() == this.player.y) {
+            this.generateAppleOrSuperPower("apple");
             this.point.addOne();
             console.log('Zdobyto jablko!');
         }
+        // add superpower effect
+        if ((this.player.x == this.superpower.getX()) && this.superpower.getY() == this.player.y) {
+            console.log('Zebrano superpower');
+            this.rescheduleSuperPower("collect");
+        }
+
         this.render();
-        setTimeout(this.movePosition.bind(this), 200); // 0.2s
+        setTimeout(this.movePosition.bind(this), this.time); // 0.2s
     }
 
     render() {
@@ -140,6 +202,34 @@ class Game {
             this.board.appendChild(newChain);
             this.score.textContent = this.point.getPointsText();
         }
+        if (!this.superpower.exists) {
+            console.log('GENEROWANIE NOWEGO ELEMENTU');
+            const newElement = document.createElement("div");
+            console.log(this.superpower.getType());
+            newElement.classList = "superpower " + this.superpower.getType();
+            newElement.style.height = "10px";
+            newElement.style.width = "10px";
+            newElement.style.left = `${this.superpower.getX()}px`;
+            newElement.style.top = `${this.superpower.getY()}px`;
+            newElement.style.position = "fixed";
+            let color = ""
+            if (this.superpower.getType() === this.superpower.typeList[0]) {
+                color = "blue";
+            } else if (this.superpower.getType() === this.superpower.typeList[1]) {
+                color = "yellow";
+            }
+            newElement.style.backgroundColor = color;
+            this.board.appendChild(newElement);
+            this.superpower.changeStatus(true);
+        }
+        if (this.superpower.exists && !this.startedTimeout) {
+            this.startedTimeout = true;
+            setTimeout(() => {
+                this.rescheduleSuperPower("change");
+                // Usunięcie elementu po 10 sekundach wyświetlania, po 10 sekundach wygenerowanie na nowo
+            }, this.superpower.time * 1000)
+
+        }
     }
 
     init() {
@@ -150,8 +240,9 @@ class Game {
         this.board.left = `${this.x}px`;
         this.board.top = `${this.y}px`;
         this.score.textContent = this.point.getPointsText();
+        this.generateAppleOrSuperPower("apple");
+        this.generateAppleOrSuperPower("superpower");
         this.movePosition();
-        this.generatePoint();
     }
 }
 
