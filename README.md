@@ -1,5 +1,5 @@
 # snake-js
-A simple snake game.
+Snake game.
 
 ## Table of contents
 * [General info](#general-info)
@@ -7,16 +7,16 @@ A simple snake game.
 * [Screenshots](#screenshots)
 
 ## General info
-Gra napisana w "czystym" JavaScript. W nowej wersji przerobiłem całkowicie kod, by przejść z programowania funkcyjnego na zorientowane obiektowo.
-Zapisuję lokalizacje każego ruchu i na podstawię danych generuję Snake za pomocą elementów blokowych.
-
-A simple Snake game works on the basis of create block
-element and saved location in array. 
-Updates the chain and check collision with every move.
-Project made as part of my JavaScript learning.
+[PL]
+Mobile and desktop version of game Snake.
+Gra zapisana w czystym JavaScript. Początkowo napisana funkcyjnie potem całkowicie kod przepisany za pomocą programowania zorientowanego obiektowo.
+Gra zapisuję lokalizacje każdego ruchu gracza i na podstawie danych generuję pozycję łańcucha Snake. Przed generowaniem elementów sprawdzana jest ewentualna kolizycjność ruchu - jeśli występuję następuję wygenerownie nowej pozycji. W aktualnej wersji dodałem supermoce (prędkość, spowolnienie). Gracz ma 10 sekund za zdobycie efektu, który trwa 20 sekund. 
 
 ## Technologies
 JavaScript
+
+## Demo 
+https://jakubjereczek.github.io/js-snake/
 
 ## Screenshots
 ![Game](./img/game.png)

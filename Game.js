@@ -5,20 +5,21 @@ import Player from './Player.js';
 
 class Game {
 
-    constructor(score, x, y, boardx, boardy, wherego, move) {
+    constructor(score, x, y, boardx, boardy, wherego, move, type) {
         this.player = new Player(x, y);
         this.point = new Point(score);
         this.apple = new Apple();
         this.superpower = new Superpower();
-        window.addEventListener('keydown', this.changePositon.bind(this));
+        window.addEventListener('keydown', this.changePositon.bind(this))
         this.boardX = boardx;
         this.boardY = boardy;
         this.wherego = wherego;
         this.move = move;
+        this.type = type;
         this.character = document.querySelector("#character");
         this.board = document.querySelector("#board");
         this.score = document.querySelector(".score");
-        this.time = "200"
+        this.time = "100"
         this.startedTimeout = false;
         this.init();
     }
@@ -61,14 +62,14 @@ class Game {
             this.superpower.generatePoint(this.boardX, this.boardY, this.move, random);
             checkColisionWithChains(this.superpower, "superpower");
             checkCollisionWithPlayerAndAppleOrSuperPower(this.superpower, "superpower");
-
-
         }
     }
 
     rescheduleSuperPower(option) {
         if (option === "collect") {
-            document.querySelector(".superpower").remove();
+            if (document.querySelector(".superpower")) {
+                document.querySelector(".superpower").remove();
+            }
             // Tutaj nastepuję ustalenie "supermocy".
             if (this.superpower.activeType === this.superpower.typeList[0]) {
                 this.time = this.time / 2;
@@ -94,20 +95,41 @@ class Game {
         }
     }
 
+    mobileButtonsInit() {
+        if (this.type === "mobile") {
+            document.querySelector(".left").addEventListener("click", () => {
+                if (this.wherego != "right") this.wherego = "left";
+            })
+            document.querySelector(".up").addEventListener("click", () => {
+                if (this.wherego != "down") this.wherego = "up";
+            })
+            document.querySelector(".right").addEventListener("click", () => {
+                if (this.wherego != "left") this.wherego = "right";
+            })
+            document.querySelector(".down").addEventListener("click", () => {
+                if (this.wherego != "up") this.wherego = "down";
+            })
+        }
+    }
+
     changePositon(event) {
         const number = event.keyCode;
         const wherego = this.wherego;
-        if ((number == 37) && (wherego != "right")) {
-            this.wherego = "left";
-        } else if ((number == 38) && (wherego != "down")) {
-            this.wherego = "up";
-        } else if ((number == 39) && (wherego != "left")) {
-            this.wherego = "right";
-        } else if ((number == 40) && (wherego != "up")) {
-            this.wherego = "down";
-        } else {
-            return;
+        console.log('ruch');
+        if (this.type === "desktop") {
+            if ((number == 37) && (wherego != "right")) {
+                this.wherego = "left";
+            } else if ((number == 38) && (wherego != "down")) {
+                this.wherego = "up";
+            } else if ((number == 39) && (wherego != "left")) {
+                this.wherego = "right";
+            } else if ((number == 40) && (wherego != "up")) {
+                this.wherego = "down";
+            } else {
+                return;
+            }
         }
+
     }
 
     movePosition() {
@@ -168,11 +190,8 @@ class Game {
         }
         const newElement = document.createElement("div");
         newElement.classList.add("apple");
-        newElement.style.height = "10px";
-        newElement.style.width = "10px";
         newElement.style.left = `${this.apple.getX()}px`;
         newElement.style.top = `${this.apple.getY()}px`;
-        newElement.style.position = "fixed";
         newElement.style.backgroundColor = "green";
         this.board.appendChild(newElement);
         const chainsElements = document.querySelectorAll("div .chain");
@@ -190,9 +209,6 @@ class Game {
             newChain.classList.add("chain");
             newChain.style.left = `${this.player.chain.cords[this.player.chain.cords.length - 1].x}px`;
             newChain.style.top = `${this.player.chain.cords[this.player.chain.cords.length - 1].y}px`;
-            newChain.style.height = "10px";
-            newChain.style.width = "10px";
-            newChain.style.position = "fixed";
             this.player.chain.changeColor();
             if (this.player.chain.color) {
                 newChain.style.backgroundImage = `url("img/chain.png")`;
@@ -207,11 +223,8 @@ class Game {
             const newElement = document.createElement("div");
             console.log(this.superpower.getType());
             newElement.classList = "superpower " + this.superpower.getType();
-            newElement.style.height = "10px";
-            newElement.style.width = "10px";
             newElement.style.left = `${this.superpower.getX()}px`;
             newElement.style.top = `${this.superpower.getY()}px`;
-            newElement.style.position = "fixed";
             let color = ""
             if (this.superpower.getType() === this.superpower.typeList[0]) {
                 color = "blue";
@@ -235,11 +248,14 @@ class Game {
     init() {
         this.character.style.left = `${this.x}px`;
         this.character.style.top = `${this.y}px`;
-        this.board.style.width = `${this.boardx}px`;
+        this.board.style.width = `${this.boardX}px`;
         this.board.style.height = `${this.boardY}px`;
+        console.log(this.boardX, this.boardY);
         this.board.left = `${this.x}px`;
         this.board.top = `${this.y}px`;
         this.score.textContent = this.point.getPointsText();
+        this.mobileButtonsInit();
+        (this.type === "mobile") ? document.querySelector(".mobile.buttons").classList.remove("hide") : null;
         this.generateAppleOrSuperPower("apple");
         this.generateAppleOrSuperPower("superpower");
         this.movePosition();

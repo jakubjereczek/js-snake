@@ -7,7 +7,7 @@ class Point {
             return _points;
         }
         this.getPointsText = function () {
-            return "Liczba zdobytych puntków jest równa " + _points;
+            return "punktów " + _points;
         }
         this.setPoints = function (value) {
             _points = value;
