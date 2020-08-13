@@ -19,7 +19,7 @@ class Game {
         this.character = document.querySelector("#character");
         this.board = document.querySelector("#board");
         this.score = document.querySelector(".score");
-        this.time = "100"
+        this.time = "150"
         this.startedTimeout = false;
         this.init();
     }
