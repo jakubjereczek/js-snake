@@ -75,18 +75,24 @@ class Game {
                 this.time = this.time / 2;
             } else if (this.superpower.activeType === this.superpower.typeList[1]) {
                 this.time = this.time * 2;
+            } else if (this.superpower.activeType === this.superpower.typeList[2]) {
+                for (let i = 0; i < 3; i++) {
+                    this.point.addOne();
+                }
             }
             setTimeout(() => {
                 // Efekt trwa 20 sekund i po tym czasie się kończy oraz generuję nowy. Zmiana na false powoduję wygenerowanie nowego elementu.
                 this.superpower.changeStatus(false);
                 this.time = "200";
+                this.startedTimeout = false;
+
             }, this.superpower.time * 2 * 1000)
         } else if (option === "change") {
             if (document.querySelector(".superpower")) {
                 document.querySelector(".superpower").remove();
-                this.generateAppleOrSuperPower("superpower");
                 // generate new cords 
                 setTimeout(() => {
+                    this.generateAppleOrSuperPower("superpower");
                     this.superpower.changeStatus(false);
                     this.startedTimeout = false;
                     // step to generate element on board
@@ -172,9 +178,11 @@ class Game {
             console.log('Zdobyto jablko!');
         }
         // add superpower effect
-        if ((this.player.x == this.superpower.getX()) && this.superpower.getY() == this.player.y) {
-            console.log('Zebrano superpower');
-            this.rescheduleSuperPower("collect");
+        if (document.querySelector(".superpower")) {
+            if ((this.player.x == this.superpower.getX()) && this.superpower.getY() == this.player.y) {
+                console.log('Zebrano superpower');
+                this.rescheduleSuperPower("collect");
+            }
         }
 
         this.render();
@@ -192,7 +200,7 @@ class Game {
         newElement.classList.add("apple");
         newElement.style.left = `${this.apple.getX()}px`;
         newElement.style.top = `${this.apple.getY()}px`;
-        newElement.style.backgroundColor = "green";
+        newElement.style.backgroundColor = "springgreen";
         this.board.appendChild(newElement);
         const chainsElements = document.querySelectorAll("div .chain");
         if ((chainsElements.length >= this.player.chain.cords.length) || (chainsElements.length >= this.point.getPoints())) {
@@ -220,6 +228,7 @@ class Game {
         }
         if (!this.superpower.exists) {
             console.log('GENEROWANIE NOWEGO ELEMENTU');
+            this.generateAppleOrSuperPower("superpower");
             const newElement = document.createElement("div");
             console.log(this.superpower.getType());
             newElement.classList = "superpower " + this.superpower.getType();
@@ -230,12 +239,15 @@ class Game {
                 color = "blue";
             } else if (this.superpower.getType() === this.superpower.typeList[1]) {
                 color = "yellow";
+            } else if (this.superpower.getType() === this.superpower.typeList[2]) {
+                color = "forestgreen";
             }
             newElement.style.backgroundColor = color;
             this.board.appendChild(newElement);
             this.superpower.changeStatus(true);
         }
         if (this.superpower.exists && !this.startedTimeout) {
+            console.log('spelniam warinek');
             this.startedTimeout = true;
             setTimeout(() => {
                 this.rescheduleSuperPower("change");
