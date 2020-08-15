@@ -19,7 +19,7 @@ class Game {
         this.character = document.querySelector("#character");
         this.board = document.querySelector("#board");
         this.score = document.querySelector(".score");
-        this.time = "150"
+        this.time = "300"
         this.startedTimeout = false;
         this.init();
     }
@@ -151,12 +151,12 @@ class Game {
             this.player.y -= this.move;
         } else if (this.wherego == "right") {
             if (this.player.x > (this.boardX - (2 * this.move))) {
-                this.player.x = -10;
+                this.player.x = -20;
             }
             this.player.x += this.move;
         } else if (this.wherego == "down") {
             if (this.player.y > (this.boardY - (2 * this.move))) {
-                this.player.y = -10;
+                this.player.y = -20;
             }
             this.player.y += this.move;
         }
@@ -173,6 +173,10 @@ class Game {
             this.point.substractOne();
         }
         if ((this.player.x == this.apple.getX()) && this.apple.getY() == this.player.y) {
+            const lastElement = document.querySelector(".apple");
+            if (lastElement) {
+                lastElement.remove();
+            }
             this.generateAppleOrSuperPower("apple");
             this.point.addOne();
             console.log('Zdobyto jablko!');
@@ -192,16 +196,13 @@ class Game {
     render() {
         this.character.style.left = `${this.player.x}px`;
         this.character.style.top = `${this.player.y}px`;
-        const lastElement = document.querySelector(".apple");
-        if (lastElement) {
-            lastElement.remove();
+        if (!document.querySelector(".apple")) {
+            const newElement = document.createElement("div");
+            newElement.classList.add("apple");
+            newElement.style.left = `${this.apple.getX()}px`;
+            newElement.style.top = `${this.apple.getY()}px`;
+            this.board.appendChild(newElement);
         }
-        const newElement = document.createElement("div");
-        newElement.classList.add("apple");
-        newElement.style.left = `${this.apple.getX()}px`;
-        newElement.style.top = `${this.apple.getY()}px`;
-        newElement.style.backgroundColor = "springgreen";
-        this.board.appendChild(newElement);
         const chainsElements = document.querySelectorAll("div .chain");
         if ((chainsElements.length >= this.player.chain.cords.length) || (chainsElements.length >= this.point.getPoints())) {
             let liczbaElementowDoUsuniecia = chainsElements.length - this.point.getPoints() + 1;
@@ -234,15 +235,15 @@ class Game {
             newElement.classList = "superpower " + this.superpower.getType();
             newElement.style.left = `${this.superpower.getX()}px`;
             newElement.style.top = `${this.superpower.getY()}px`;
-            let color = ""
-            if (this.superpower.getType() === this.superpower.typeList[0]) {
-                color = "blue";
-            } else if (this.superpower.getType() === this.superpower.typeList[1]) {
-                color = "yellow";
-            } else if (this.superpower.getType() === this.superpower.typeList[2]) {
-                color = "forestgreen";
-            }
-            newElement.style.backgroundColor = color;
+            // let color = ""
+            // if (this.superpower.getType() === this.superpower.typeList[0]) {
+            //     color = "blue";
+            // } else if (this.superpower.getType() === this.superpower.typeList[1]) {
+            //     color = "yellow";
+            // } else if (this.superpower.getType() === this.superpower.typeList[2]) {
+            //     color = "forestgreen";
+            // }
+            // newElement.style.backgroundColor = color;
             this.board.appendChild(newElement);
             this.superpower.changeStatus(true);
         }

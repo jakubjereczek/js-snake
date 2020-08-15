@@ -2,7 +2,7 @@ class Superpower {
 
     constructor() {
         // id 0 - speed, id 1 - slow
-        this.typeList = ["speed", "slow", "3points"]
+        this.typeList = ["speed", "slow", "points3"]
         this.activeType = ""
         this.time = 10;
         this.exists = false;
@@ -36,8 +36,13 @@ class Superpower {
     }
 
     generatePoint(boardx, boardy, move, typeId) {
+        const x = Math.round((Math.floor(Math.random() * (boardy - move) / 10) * 10));
+        const y = Math.round((Math.floor(Math.random() * (boardy - move) / 10) * 10));
+        if (x % move !== 0 || y % move !== 0) {
+            return this.generatePoint(boardx, boardy, move, typeId);
+        }
+        this.setCords(x, y);
         console.log('WYGENEROWANA NOWA POZYCJE DLA SUPERPOWER');
-        this.setCords(Math.round(Math.floor(Math.random() * (boardx - move) / 10) * 10), (Math.floor(Math.random() * (boardy - move) / 10) * 10));
         this.setType(typeId)
     }
 

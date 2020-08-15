@@ -5,9 +5,9 @@ function selectMode(event) {
     (mobile > 400) ? mobile = 400 : null;
     const target = event.target.classList;
     if (target.contains("mobile")) {
-        new Game(1, 10, 20, mobile, mobile, "down", 10, "mobile");
+        new Game(1, 0, 20, mobile, mobile, "down", 20, "mobile");
     } else if (target.contains("desktop")) {
-        new Game(1, 10, 20, 400, 400, "down", 10, "desktop");
+        new Game(1, 0, 20, 400, 400, "down", 20, "desktop");
     }
     document.querySelector(".loader").classList.add("hide");
 }
