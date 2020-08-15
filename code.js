@@ -1,13 +1,19 @@
 import Game from './Game.js';
 
+const move = 20;
+let mobile = "";
+
 function selectMode(event) {
-    let mobile = (Math.floor(Math.floor(screen.width) / 10) * 10) - 20;
-    (mobile > 400) ? mobile = 400 : null;
     const target = event.target.classList;
+    mobile = (Math.floor(Math.floor(screen.width) / 10) * 10) - 20;
+    if (mobile % move !== 0) {
+        mobile -= 10;
+    }
+    if (mobile > 400) mobile = 400
     if (target.contains("mobile")) {
-        new Game(1, 0, 20, mobile, mobile, "down", 20, "mobile");
+        new Game(1, 0, 20, mobile, mobile, "down", move, "mobile");
     } else if (target.contains("desktop")) {
-        new Game(1, 0, 20, 400, 400, "down", 20, "desktop");
+        new Game(1, 0, 20, 400, 400, "down", move, "desktop");
     }
     document.querySelector(".loader").classList.add("hide");
 }
