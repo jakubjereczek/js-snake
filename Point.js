@@ -7,7 +7,7 @@ class Point {
             return _points;
         }
         this.getPointsText = function () {
-            return "punktów " + _points;
+            return "Liczba Twoich punktów " + _points;
         }
         this.setPoints = function (value) {
             _points = value;

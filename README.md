@@ -20,3 +20,7 @@ https://jakubjereczek.github.io/js-snake/
 
 ## Screenshots
 ![Game](./img/game.png)
+### Latest version 
+![Game with graphics](./img/game2.png)
+
+

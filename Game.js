@@ -18,7 +18,7 @@ class Game {
         this.type = type;
         this.character = document.querySelector("#character");
         this.board = document.querySelector("#board");
-        this.score = document.querySelector(".score");
+        this.score = document.querySelector(".score .text");
         this.time = "300"
         this.startedTimeout = false;
         this.init();
@@ -173,35 +173,47 @@ class Game {
             this.point.substractOne();
         }
         if ((this.player.x == this.apple.getX()) && this.apple.getY() == this.player.y) {
-            const lastElement = document.querySelector(".apple");
-            if (lastElement) {
-                lastElement.remove();
+            const generatedApple = document.querySelector(".apple");
+            if (generatedApple) {
+                generatedApple.remove();
             }
             this.generateAppleOrSuperPower("apple");
             this.point.addOne();
-            console.log('Zdobyto jablko!');
         }
         // add superpower effect
         if (document.querySelector(".superpower")) {
             if ((this.player.x == this.superpower.getX()) && this.superpower.getY() == this.player.y) {
-                console.log('Zebrano superpower');
                 this.rescheduleSuperPower("collect");
             }
         }
-
         this.render();
         setTimeout(this.movePosition.bind(this), this.time); // 0.2s
     }
 
     render() {
+        const createElement = (type, className, x, y) => {
+            const newElement = document.createElement("div");
+            if (type === "superpower") {
+                newElement.classList.add("superpower");
+                this.superpower.changeStatus(true);
+            }
+            newElement.classList.add(className);
+            if (type === "chain") {
+                this.player.chain.changeColor();
+                if (this.player.chain.color) {
+                    newElement.style.backgroundImage = `url("img/chain.png")`;
+                } else {
+                    newElement.style.backgroundImage = `url("img/chain2.png")`;
+                }
+            }
+            newElement.style.left = `${x}px`;
+            newElement.style.top = `${y}px`;
+            this.board.appendChild(newElement);
+        }
         this.character.style.left = `${this.player.x}px`;
         this.character.style.top = `${this.player.y}px`;
         if (!document.querySelector(".apple")) {
-            const newElement = document.createElement("div");
-            newElement.classList.add("apple");
-            newElement.style.left = `${this.apple.getX()}px`;
-            newElement.style.top = `${this.apple.getY()}px`;
-            this.board.appendChild(newElement);
+            createElement("apple", "apple", this.apple.getX(), this.apple.getY());
         }
         const chainsElements = document.querySelectorAll("div .chain");
         if ((chainsElements.length >= this.player.chain.cords.length) || (chainsElements.length >= this.point.getPoints())) {
@@ -214,47 +226,19 @@ class Game {
             this.player.chain.deleteLast();
         }
         if ((this.player.chain.cords.length > 0) && (this.point.getPoints() > 0)) {
-            const newChain = document.createElement("div");
-            newChain.classList.add("chain");
-            newChain.style.left = `${this.player.chain.cords[this.player.chain.cords.length - 1].x}px`;
-            newChain.style.top = `${this.player.chain.cords[this.player.chain.cords.length - 1].y}px`;
-            this.player.chain.changeColor();
-            if (this.player.chain.color) {
-                newChain.style.backgroundImage = `url("img/chain.png")`;
-            } else {
-                newChain.style.backgroundImage = `url("img/chain2.png")`;
-            }
-            this.board.appendChild(newChain);
+            createElement("chain", "chain", this.player.chain.cords[this.player.chain.cords.length - 1].x, this.player.chain.cords[this.player.chain.cords.length - 1].y);
             this.score.textContent = this.point.getPointsText();
         }
         if (!this.superpower.exists) {
-            console.log('GENEROWANIE NOWEGO ELEMENTU');
             this.generateAppleOrSuperPower("superpower");
-            const newElement = document.createElement("div");
-            console.log(this.superpower.getType());
-            newElement.classList = "superpower " + this.superpower.getType();
-            newElement.style.left = `${this.superpower.getX()}px`;
-            newElement.style.top = `${this.superpower.getY()}px`;
-            // let color = ""
-            // if (this.superpower.getType() === this.superpower.typeList[0]) {
-            //     color = "blue";
-            // } else if (this.superpower.getType() === this.superpower.typeList[1]) {
-            //     color = "yellow";
-            // } else if (this.superpower.getType() === this.superpower.typeList[2]) {
-            //     color = "forestgreen";
-            // }
-            // newElement.style.backgroundColor = color;
-            this.board.appendChild(newElement);
-            this.superpower.changeStatus(true);
+            createElement("superpower", this.superpower.activeType, this.superpower.getX(), this.superpower.getY());
         }
         if (this.superpower.exists && !this.startedTimeout) {
-            console.log('spelniam warinek');
             this.startedTimeout = true;
             setTimeout(() => {
                 this.rescheduleSuperPower("change");
                 // Usunięcie elementu po 10 sekundach wyświetlania, po 10 sekundach wygenerowanie na nowo
             }, this.superpower.time * 1000)
-
         }
     }
 
